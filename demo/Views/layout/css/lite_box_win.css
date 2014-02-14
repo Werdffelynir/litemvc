@@ -1,0 +1,41 @@
+._ajaxSlimBox {
+	display: none;
+	width: 500px;
+	min-height: 150px;
+	padding: 20px;
+	position: fixed;
+    margin: 10% auto auto 50%;
+	left: -250px;
+	background-color: #ebe1ff;
+	box-shadow: 0 0 2px 2px rgba(0,0,24,0.75);
+}
+._ajaxSlimBoxClose{
+	width: 15px;
+	height: 15px;
+    margin: -15px auto auto -15px;
+	text-align: center;
+	vertical-align: super;
+	color: #000a1c;
+	background-color: #FFF;
+	border-radius: 10px;
+	cursor: pointer;
+}
+._ajaxSlimBoxClose:hover {
+	color: #FFF;
+	background-color: #000a1c;
+}
+
+._ajaxSlimBoxContent{}
+
+._ajaxContentUnderBlock {
+	display: block;
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	background-color: rgba(0,0,50,0.7);
+}
+
+._ajaxSlimLoading {
+	text-align: center;
+	vertical-align: super;
+}

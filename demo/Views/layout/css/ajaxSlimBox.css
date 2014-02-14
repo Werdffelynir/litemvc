@@ -1,0 +1,47 @@
+/*New*/
+.slimBox{
+	width: 800px;
+	display: none;
+	position:fixed;
+	margin-top: 150px;
+	padding: 20px;
+	border-radius: 6px;
+	background-color: #99FFFF;
+	box-shadow: 0 0 15px rgba(53,0,83,0.4);
+}
+.slimBoxClose{
+	display: block;
+	height: 18px;
+	width: 40px;
+	margin: -16px auto auto -16px;
+	padding: 1px 4px;
+	border-radius: 7px;
+	background-color: #003366;
+	color: #FFFFFF;
+	cursor: pointer;
+	font-weight: bold;
+	text-align: center;
+}
+.slimBoxClose:hover{
+	background-color: #5C29DD;
+	color: #99FFFF ;
+}
+.slimLoading{
+	text-align: center;
+}
+.slimBackground{
+	width: 100%;
+	height: 100%;
+	position: fixed;
+	background-color: rgba(53,0,83,0.2);
+}
+
+
+
+/*New*/
+.slimBox{}
+.slimBoxClose{}
+.slimBoxClose:hover{}
+.slimBoxContent{}
+.slimLoading{}
+.slimBackground{}
