@@ -9,6 +9,7 @@ define('URL', App::$url);
 define('URL_THEME', App::$urlTheme);
 
 
+
 function limitChars($text, $limit=200, $more=' ... '){
     $text=  mb_substr($text,0,$limit);
     if(mb_substr($text, mb_strlen($text)-1,1) && mb_strlen($text) == $limit) {

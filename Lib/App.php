@@ -111,6 +111,7 @@ class App
     private $_controller;
     private $_method;
     private $_args = array();
+    public static $_helpers = array();
 
 	public function __construct()
 	{
@@ -158,6 +159,10 @@ class App
         // Установка параметра debug
         if(isset(self::$config['debug']))
             self::$debug = self::$config['debug'];
+
+    // Установка файлов автоподгрузки helpers
+    if(isset(self::$config['autoloadHelpers']))
+      self::$_helpers = self::$config['autoloadHelpers'];
 
         // Установка времини жизник кук
         if(isset(self::$config['cookieLife']))
@@ -235,10 +240,13 @@ class App
      */
     private function runController()
     {
-		// определение названия класса контролера
+      // Авто загрузка файлов хелперов установленных в конфигурации
+      self::autoloadHelpers();
+
+		  // определение названия класса контролера
         $controller = 'Controller'.ucfirst(self::$controller);
 
-        // определение названия метода контролера
+      // определение названия метода контролера
         $method = 'action'.ucfirst(self::$method);
 
 		// определение пути к классу контролера
@@ -309,6 +317,22 @@ class App
     	spl_autoload($className);
 	}
 
+
+  /**
+   * Автозагрузка файлов хелперов
+   */
+  private static function autoloadHelpers()
+  {
+    if(!empty(self::$_helpers)){
+      $autoload = self::$_helpers;
+      $path = ROOT.self::$config['appPath'].DS.'Helpers'.DS;
+
+      foreach ($autoload as $file)
+        if(file_exists($path.$file.'.php'))
+          include $path.$file.'.php';
+    }
+  }
+
     /**
      * Регистрация автозагрузки классов приложения
      *
@@ -342,6 +366,7 @@ class App
 		spl_autoload_extensions(".php");
     	spl_autoload($className);
 	}
+
 
 
     /**
@@ -647,8 +672,9 @@ class App
      *
      * @param string    $errorMsg   Сообщения о ошибке
      * @param null      $fileName   Конкретные данные, например имя файла
+     * @param bool      $die
      */
-    public static function ExceptionError($errorMsg='File not exists', $fileName=null, $die=true)
+  public static function ExceptionError($errorMsg='File not exists', $fileName=null, $die=true)
     {
         try {
             throw new Exception("TRUE.");
@@ -783,6 +809,42 @@ class App
             return self::$_flashStorage;
         }
     }
+
+
+	/**
+   * Подгрузка файлов хелперов, загружает файлы с каталога "Helpers"
+   * активного приложения, определяя ранее включенные файлы.
+   * <pre>
+	 * App::helper('String');
+   * </pre>
+   *
+   * @param string  $file   файл хелпер
+   * @return bool
+   */
+  public static function helper($file)
+  {
+    if (in_array($file, self::$_helpers)) {
+      return true;
+    } else {
+
+      $toInclude = './Helpers' . DS . $file . '.php';
+
+      if (file_exists($toInclude)) {
+        self::$_helpers[] = $file ;
+        include $toInclude;
+        return true;
+      } else {
+
+        if (App::$debug) {
+          App::ExceptionError('ERROR! File not exists!', $toInclude);
+        } else {
+          return false;
+        }
+      }
+    }
+
+  }
+
 
 
 

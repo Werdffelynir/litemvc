@@ -127,13 +127,14 @@ class Controller
      * $content = $this->partial("blog/topSidebar", array( "var" => "value" ));
      *</pre>
      *
-     * @param  string   $viewName   путь к виду, особености:
+     * @param   string  $viewName   путь к виду, особености:
      *                              	"partial/myview" сгенерирует "app/Views/partial/myview.php"
      *                              	"//partial/myview" сгенерирует "app/partial/myview.php"
-     * @param  array    $data       массив данных для передачи в вид
-     * @return string
+     * @param   array   $data       массив данных для передачи в вид
+     * @param   bool    $e
+     * @return null|string
      */
-    public function partial( $viewName, array $data=null, $e=false )
+  public function partial( $viewName, array $data=null, $e=false )
     {
 
         if(empty($viewName)) {
