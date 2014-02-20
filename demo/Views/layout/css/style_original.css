@@ -202,12 +202,12 @@ p{
 	transition: all 0.3s ease;
 }
 .topMenu li a:hover{
-    /*color: #12122E;*/
-    text-shadow: 0 0 5px rgba(255,255,255,0.9);
+    color: #9ac4ff;
+    text-shadow: 1px 0 4px #FFF;
 }
 .topMenu li a.active{
-    /*color: #12122E;*/
-    text-shadow: 0 0 5px rgba(255,255,255,0.9);
+    color: #9ac4ff;
+    text-shadow: 0 1px 4px 2px #FFF;
 }
 
 /* Common */
@@ -467,8 +467,26 @@ h3.doc-group{
 }
 
 
-
-
+/* Show code block for view */
+code.c{
+    display: block;
+    margin: 2px 0;
+    padding: 5px;
+    background-color: #00369A;
+    border: 1px solid #000 ;
+    color: #F6D806;
+	font-family: Consolas, "Courier New", Courier, monospace;
+}
+code.cl{
+    display: inline-block;
+    padding: 0px 4px;
+    vertical-align: baseline;
+    background-color: #00369A;
+    border: 1px solid #000 ;
+    color: #F6D806;
+    border-radius: 4px;
+	font-family: Consolas, "Courier New", Courier, monospace;
+}
 
 
 

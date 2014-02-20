@@ -53,16 +53,30 @@ class ControllerIndex extends Ctrl
     {
         $title = 'Установлен язык: '.App::$langCode;
 		$content = '<p>Тестовая генерация 1000 обращений к масиву переводов.</p><br>';
-
+		
+		
+		
+		/*
+		// SPEED TEST
+		list($msecX,$secX)=explode(chr(32),microtime());
+		$timeX=$secX+$msecX;
+		//START
+		
 		$content.= '<ol>';
-        for($i=0;$i<1000;$i++)
+        for($i=0;$i<10000;$i++)
             $content.='<li>'.App::lang('title').'</li>';
         $content.= '<ol>';
+        
+        //END
+        list($msecX,$secX)=explode(chr(32),microtime());
+		$generateX = 'Генерация скрипта <b>'.round(($secX+$msecX)-$timeX,4).'</b> секунд';
+		*/
+
 
         // вызов Views/main.php
 	    $this->render('OUT', false,
             array(
-                'title'=>$title,
+                'title'=>$title,//." ".$generateX,
                 'content'=>$content
             ));
     }
@@ -149,7 +163,7 @@ class ControllerIndex extends Ctrl
 
                 $this->render('OUT', 'main', array('title'=>$title, 'content'=>$content)); // вызов Views/page/index.php
 
-                App::redirect(App::$url, 3);
+                App::redirect($_SERVER["HTTP_REFERER"], 3);
             }
         }
 
@@ -191,6 +205,8 @@ class ControllerIndex extends Ctrl
         $classPages = strip_tags(trim($this->urlArgs(1)));
         $linkPages = strip_tags(trim($this->urlArgs(2)));
 
+		$tagsR = array('&lt;p&gt;','&lt;/p&gt;','&lt;b&gt;','&lt;/b&gt;','&lt;br&gt;','&lt;br/&gt;','&lt;br /&gt;','&lt;pre&gt;','&lt;/pre&gt;','&lt;code&gt;','&lt;code class="c"&gt;','&lt;code class="cl"&gt;','&lt;/code&gt;');
+		$tagsS = array('<p>','</p>','<b>','</b>','<br>','<br/>','<br />','<pre>','</pre>','<code>','<code class="c">','<code class="cl">','</code>');
 
         if(!empty($linkPages)){
             // Подключение моддели Pages метода queryLink
@@ -203,12 +219,19 @@ class ControllerIndex extends Ctrl
 					$result['text'] .= '
 						<div class="showerBlock"> 
 						    <span class="doc-code-line">'.htmlspecialchars($value['title']).'</span> 
-						    '.htmlspecialchars($value['info']).'
+						    '.htmlspecialchars($value['info']);
+
+					
+					if(!empty($value['text'])){
+						$textRenamed = str_replace( $tagsR, $tagsS, htmlspecialchars($value['text'], ENT_NOQUOTES, "UTF-8")); 
+					$result['text'] .= '
 						    <span class="doc-btn">Подробней</span>
 						    <div class="toggle" style="display:none">
-						    	'.htmlspecialchars($value['text']).'
-						    </div>
-						</div>';
+						    	'.$textRenamed.'
+						    </div>';
+					}
+					
+					$result['text'] .= '</div>';
 				}
 			}
 
@@ -219,12 +242,18 @@ class ControllerIndex extends Ctrl
 					$result['text'] .= '
 						<div class="showerBlock"> 
 						    <span class="doc-code-line">'.$value['title'].'</span> 
-						    '.$value['info'].'
+						    '.$value['info'];
+						    
+					if(!empty($value['text'])){
+						$textRenamed = str_replace( $tagsR, $tagsS, htmlspecialchars($value['text'], ENT_NOQUOTES, "UTF-8")); 
+					$result['text'] .= '
 						    <span class="doc-btn">Подробней</span>
 						    <div class="toggle" style="display:none">
-						    	'.$value['text'].'
-						    </div>
-						</div>';
+						    	'.$textRenamed.'
+						    </div>';
+					}
+					
+					$result['text'] .= '</div>';
 				}
 			}
 
@@ -235,12 +264,19 @@ class ControllerIndex extends Ctrl
                     $result['text'] .= '
 						<div class="showerBlock">
 						    <span class="doc-code-line">'.$value['title'].'</span> 
-						    '.$value['info'].'
+						    '.$value['info'];
+				
+					if(!empty($value['text'])){
+						$textRenamed = str_replace( $tagsR, $tagsS, htmlspecialchars($value['text'], ENT_NOQUOTES, "UTF-8")); 
+					$addedText = str_replace();
+					$result['text'] .= '
 						    <span class="doc-btn">Подробней</span>
 						    <div class="toggle" style="display:none">
-						    	'.$value['text'].'
-						    </div>
-						</div>';
+						    	'.$textRenamed.'
+						    </div>';
+					}
+					
+					$result['text'] .= '</div>';
                 }
             }
 

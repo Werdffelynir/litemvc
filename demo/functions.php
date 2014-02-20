@@ -31,3 +31,4 @@ function limitWords($input_text, $limit = 50, $end_str = '...') {
     $out = implode(' ', $words);
     return $out.$end_str;
 }
+

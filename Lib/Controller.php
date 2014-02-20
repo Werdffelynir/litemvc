@@ -396,7 +396,7 @@ class Controller
 	 * Метод для подключение моделей, параметром берет созданый раньше класс Метода
 	 * Возвращает обект модели с ресурсом подключеным к базе данных
 	 *
-	 * @param  string $modelName Имя класса модели
+	 * @param  string     $modelName  Имя класса модели
 	 * @return bool|object
 	 */
 	public function model($modelName)
@@ -412,7 +412,8 @@ class Controller
 
 
     /**
-     *
+     * Алис класса App{} initLang()
+     * Инициализация языка.
      */
     public function initLang($langCode=false, $cookie=true)
 	{
@@ -420,13 +421,28 @@ class Controller
 	}
 
 	/**
-     * Доступк к переводу и остальным атрибутам
-     */
+   * Алис класса App{} lang()
+   * Доступк к переводу и атрибутам языка.
+   */
 	public function lang($key, $e=false)
     {
         return App::lang($key, $e);
 	}
 
+  /**
+   * Алис класса App{} helper()
+   * Подключение дополнительных файлов хелперов, что небыли указаны в
+   * конфигурации приложения автозагрузки
+   *
+   * @param   string  $file   название файла в каталоге Helpers без расширения
+   * @return  bool            false|true или при debug страницу ошибки
+   */
+  public function helper($file)
+  {
+    return App::helper($file);
+  }
 
-	
+
+
+
 } // END CLASS 'Controller'

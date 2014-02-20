@@ -153,7 +153,10 @@ class ControllerPage extends Ctrl {
 	            $lestUpdate = $this->modelDocs->getById($docsLastId);
 
 	            // переадрисация, на толькочто созданую запись
-	            App::redirect(App::$url.'/page/editDocs/'.$lestUpdate['class'].'/'.$lestUpdate['id']);
+                if($_POST['formType'] == 'db')
+                    App::redirect(App::$url.'/page/editDocs/'.$_POST['class'].'/'.$_POST['id']);
+                else
+	                App::redirect(App::$url.'/page/editDocs/'.$lestUpdate['class'].'/'.$lestUpdate['id']);
 	        }else{
 	            App::flash('formEdit', '<div class="flashMessage_error">Возникла ошибка во время сохранения.</div>');
 	            App::redirect(App::$url.'/page/editDocs/');
