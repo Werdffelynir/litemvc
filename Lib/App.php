@@ -427,6 +427,7 @@ class App
 
     /**
      * Определение действительных URl аресов
+     * Метод системный.
      */
     private function findUrl()
     {
@@ -715,6 +716,18 @@ class App
     }
 
 
+    /**
+     * Сохранение данных в куках браузера, по упрощенной и надежной схеме.
+     * Хранение кук происходит в шифрованом виде base64, парамент шифрования
+     * настраевается в конфигурационном файле приложения, по умолчанию включено.
+     *
+     * @param string    $key        Имя
+     * @param string    $value      Значение
+     * @param null      $expire     Время хранения
+     * @param null      $path       Путь
+     * @param null      $domain     Домен
+     * @return bool
+     */
     public static function setCookie($key, $value, $expire = null, $path = null, $domain = null)
     {
         if ($expire == null) {
