@@ -1,0 +1,449 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.blockCentral{
+    padding: 10px;
+}
+.blockCentral h2{
+    margin: 2px auto 10px;
+}
+.blockCentral h3{
+    margin: 10px auto 5px;
+}
+.blockCentral ol, .blockCentral ul{
+	padding: 0 10px;
+}
+.blockCentral .text{
+    margin-bottom: 10px;
+}
+.blockCentral .text_info{
+    margin: 10px 0 25px;
+    padding: 5px 10px;
+    border-top: 1px solid #003366;
+    background-color: #6633FF;
+    color: #FFF;
+}
+.blockCentral .text_info .date{
+    text-align: right;
+    font-style: italic;
+}
+
+
+
+#header h1{
+    display: inline-block;
+    width: 200px;
+	color: #330066;
+    text-shadow: 1px 1px 1px rgba(107,56,255,0.2);
+}
+
+#header .lang{
+	height: 30px;
+    width: 200px;
+    float: right;
+    text-align: right;
+}
+#header .lang a{
+	height: 33px;
+	padding: 0 3px 3px 3px;
+	display: inline-block;
+    text-decoration: none;
+    font-weight: bold;
+    color: #330066;
+    text-shadow: 1px 1px 1px rgba(107,56,255,0.2);
+    -webkit-transition: all 0.3s ease;
+    -moz-transition: all 0.3s ease;
+    -ms-transition: all 0.3s ease;
+    transition: all 0.3s ease;
+}
+#header .lang a:hover, .activeLang{
+    color: #fff;
+    background: #6699FF;
+    border-radius: 4px;
+}
+#header .lang img{
+	display: inline-block;
+}
+#header .lang label{
+	display: inline-block;
+    line-height: 30px;
+    vertical-align: 10px;
+}
+
+
+/* Layout style */
+#page{
+    min-width: 680px;
+    max-width: 1200px;
+    margin: 0 auto;
+    background: #FFFFFF;
+    box-shadow: 0 0 4px rgba(107,56,255,0.4);
+}
+#header{
+    height: 50px;
+    padding: 10px;
+}
+#topMenu{
+    height: 30px;
+    padding-top: 7px;
+    border-top: 1px solid #3D0AD6;
+    border-bottom: 1px solid #3D0AD6;
+	background: #6435ff;
+	background: -moz-linear-gradient(top,  #6435ff 0%, #3700ff 100%);
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#6435ff), color-stop(100%,#3700ff));
+	background: -webkit-linear-gradient(top,  #6435ff 0%,#3700ff 100%);
+	background: -o-linear-gradient(top,  #6435ff 0%,#3700ff 100%);
+	background: -ms-linear-gradient(top,  #6435ff 0%,#3700ff 100%);
+	background: linear-gradient(to bottom,  #6435ff 0%,#3700ff 100%);
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#6435ff', endColorstr='#3700ff',GradientType=0 );
+}
+#content{
+    min-height: 350px;
+}
+#footer{
+    min-height: 50px;
+    padding: 10px;
+    color: #66CCFF;
+    font-size: 11px;
+	background: #6435ff;
+	background: -moz-linear-gradient(top,  #6435ff 0%, #3700ff 100%);
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#6435ff), color-stop(100%,#3700ff));
+	background: -webkit-linear-gradient(top,  #6435ff 0%,#3700ff 100%);
+	background: -o-linear-gradient(top,  #6435ff 0%,#3700ff 100%);
+	background: -ms-linear-gradient(top,  #6435ff 0%,#3700ff 100%);
+	background: linear-gradient(to bottom,  #6435ff 0%,#3700ff 100%);
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#6435ff', endColorstr='#3700ff',GradientType=0 );
+}
+#footer a{
+    color:#FFCC00;
+}
+
+
+/* TopMenu */
+.topMenu{
+    text-align: center;
+}
+.topMenu li{
+    margin: 0; padding: 0;
+    list-style: none;
+    display: inline-block;
+}
+.topMenu li a{
+    padding: 3px 15px;
+    text-decoration: none;
+    font-weight: bold;
+    color: #FFF;
+    text-transform: uppercase;
+    -webkit-transition: all 0.3s ease;
+	-moz-transition: all 0.3s ease;
+	-ms-transition: all 0.3s ease;
+	transition: all 0.3s ease;
+}
+.topMenu li a:hover{
+    color: #9ac4ff;
+    text-shadow: 1px 0 4px #FFF;
+}
+.topMenu li a.active{
+    color: #9ac4ff;
+    text-shadow: 0 1px 4px 2px #FFF;
+}
+
+/* Common */
+.block{
+	margin-bottom: 20px;
+}
+.block h4{
+	margin-top: 4px;
+	padding: 5px;
+	font-size: 12px;
+	color: #FFF;
+	background: #6435ff;
+	background: -moz-linear-gradient(top,  #6435ff 0%, #3700ff 100%);
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#6435ff), color-stop(100%,#3700ff));
+	background: -webkit-linear-gradient(top,  #6435ff 0%,#3700ff 100%);
+	background: -o-linear-gradient(top,  #6435ff 0%,#3700ff 100%);
+	background: -ms-linear-gradient(top,  #6435ff 0%,#3700ff 100%);
+	background: linear-gradient(to bottom,  #6435ff 0%,#3700ff 100%);
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#6435ff', endColorstr='#3700ff',GradientType=0 );
+}
+.block div{
+	padding: 5px;
+}
+
+
+input{
+	margin: 4px 0 4px 0;
+}
+input[type='text']{
+	border: 1px solid #6633FF;
+	padding: 2px;
+	font-size: 12px;
+}
+input[type='submit']{
+	border: none;
+	padding: 5px;
+	font-size: 12px;
+	color: #FFF;
+    background-color: #6633FF;
+    cursor: pointer;
+}
+input[type='submit']:hover{
+	color: #FFF;
+    background-color: #3500FF;
+}
+
+/* Форма регистрации */
+.form_login{
+    padding: 0; margin: 0;
+}
+.form_login span{
+    display: inline-block;
+    width: 100px;
+    margin-left: -3px;
+    padding: 7px 5px 5px;
+    color: #3500FF;
+    background-color: #DFC5FF;
+    border-bottom-right-radius: 5px;
+    border-top-right-radius: 5px;
+}
+.form_login h2{
+    margin: 10px 0;
+}
+.form_login input[type='text']{
+    display: inline-block;
+    padding: 5px;
+    border-bottom-left-radius: 5px;
+    border-top-left-radius: 5px;
+}
+.form_login input[type='submit']{
+    padding: 5px 50px;
+    border-radius: 5px;
+}
+
+/*Chunks styles*/
+.left-menu{
+    list-style: none;
+    margin: 5px 0;
+}
+.left-menu a{
+    display: block;
+    padding: 2px 15px;
+    color: #0c08ae;
+    text-decoration: none;
+    -webkit-transition: all 0.3s ease;
+	-moz-transition: all 0.3s ease;
+	-ms-transition: all 0.3s ease;
+	transition: all 0.3s ease;
+}
+.left-menu a:hover{
+    background-color: #efe9ff;
+    color: #000a1c;
+}
+.active_left_menu{
+    background-color: #efe9ff;
+    color: #000a1c;
+}
+
+
+
+/* SlimBox */
+/*Login form win, копия кода ajaxSlimBox.css .slimBox с измененным параметром width */
+.ajaxLogin{
+    width: 400px;
+    display: none;
+    position:fixed;
+    margin-top: 150px;
+    padding: 20px;
+    border-radius: 6px;
+    background-color: #99FFFF;
+    box-shadow: 0 0 15px rgba(53,0,83,0.4);
+}
+
+
+.ajaxBlock_a, .ajaxBlock_b{
+    color: #660000;
+    background-color: #99FFFF;
+    padding: 10px;
+    margin-right: 10px;
+    width: 50px;
+    display: inline;
+}
+
+
+/** Edit form **/
+.form_edit span.label{
+    display: inline-block;
+    width: 125px;
+    padding: 4px 0 2px 3px;
+    background-color: #99FFFF;
+    border-top-left-radius: 5px;
+    border-bottom-left-radius: 5px;
+}
+.form_edit input[type=text]{
+    display: inline-block;
+    width: 350px;
+    margin-left: -3px;
+    border: 1px solid #99FFFF;
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
+}
+.form_edit #editor{
+    width: 98%;
+    min-height: 400px;
+}
+
+/** Edit Docs form **/
+.form_edit_docs option{
+    width: 125px;
+}
+.form_edit_docs span.label{
+    display: inline-block;
+    width: 125px;
+    padding: 4px 0 2px 3px;
+    background-color: #99FFFF;
+    border-top-left-radius: 5px;
+    border-bottom-left-radius: 5px;
+}
+.form_edit_docs input[type=text]{
+    display: inline-block;
+    width: 250px;
+    margin-left: -3px;
+    border: 1px solid #99FFFF;
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
+}
+.form_edit_docs input[name=info]{
+    width: 500px;
+}
+
+.form_edit_docs #editor{
+    width: 98%;
+    min-height: 400px;
+}
+
+
+/* Изминение виз-редактора NiceEdit*/
+.nicEdit-panel{
+    /*background-color: #0033FF;*/
+}
+.nicEdit-pane form input[type=submit]{
+    color: #0033FF;
+}
+.nicEdit-pane{
+    color: #0033FF;
+}
+
+/* Colunm blocks */
+.oneBlock{
+    padding: 10px 10px;
+}
+
+/* Флеш сообщение для едитора */
+.flashMessage_success{
+    display: block;
+    margin: 5px 0;
+    width: 98%;
+    padding: 20px 10px;
+    background-color: #0033FF;
+    color: #FFF;
+}
+.flashMessage_error{
+    display: block;
+    margin: 5px 0;
+    width: 98%;
+    padding: 20px 10px;
+    background-color: #0033FF;
+    color: #ff382d;
+}
+
+
+
+/* Блоки списки документации toogle */
+.showerBlock{
+	margin: 5px 0;
+}
+.doc-code{
+    display: block;
+    margin: 2px 0;
+    padding: 5px;
+    background-color: #9ac4ff;
+    border: 1px solid #00369A ;
+    color: #000a1c;
+	font-family: Consolas, "Courier New", Courier, monospace;
+}
+.doc-code-line{
+    display: inline-block;
+    padding: 0px 4px;
+    vertical-align: baseline;
+    background-color: #9ac4ff;
+    border: 1px solid #00369A;
+    border-radius: 4px;
+    color: #000a1c;
+	font-family: Consolas, "Courier New", Courier, monospace;
+}
+.doc-btn{
+	display:inline-block;
+	margin: 0 3px;
+	padding: 0px 5px;
+	color:#339;
+	cursor:pointer;
+}
+.toggle{
+	display: block;
+	margin: 4px 0 15px;
+	padding: 4px;
+	border: 1px dotted #00369A;
+	background-color: #CAB8FF;
+}
+h3.doc-group{
+    margin-top: 20px;
+    padding: 0 4px;
+    background-color: #00369A;
+    color: #CAB8FF;
+    border-top-left-radius: 4px;
+    border-bottom-left-radius: 4px;
+}
+
+
+/* Show code block for view */
+code.c{
+    display: block;
+    margin: 2px 0;
+    padding: 5px;
+    background-color: #00369A;
+    border: 1px solid #000 ;
+    color: #F6D806;
+	font-family: Consolas, "Courier New", Courier, monospace;
+}
+code.cl{
+    display: inline-block;
+    padding: 0px 4px;
+    vertical-align: baseline;
+    background-color: #00369A;
+    border: 1px solid #000 ;
+    color: #F6D806;
+    border-radius: 4px;
+	font-family: Consolas, "Courier New", Courier, monospace;
+}
+
+
+
+

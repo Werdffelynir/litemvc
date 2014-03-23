@@ -43,6 +43,9 @@ class Model
     {
         $this->before();
 
+        //if(isset($this->db))
+
+
         $this->dbConfConSett = ( isset(App::$config['dbConnects']) AND !empty(App::$config['dbConnects']) ) ? App::$config['dbConnects'] : null;
 
         if (!is_null($this->dbConfConSett)) {
@@ -61,7 +64,14 @@ class Model
 
     private function __clone(){}
 
+    /**
+     * Метод инициализируется перед соединением с ДБ
+     */
     public function before(){}
+
+    /**
+     * Метод инициализируется после соединением с ДБ
+     */
     public function after(){}
 
 
@@ -109,33 +119,36 @@ class Model
      * Подсчет количества записй в таблице
      *
      * @param string    $db     Екземпляр соединения
-     * @param null      $tbl    таблица
+     * @param string    $tbl    таблица
      * @return mixed
      */
     public function сounter($db, $tbl = self::TBL)
 	{
 		#$tbl = (is_null($tbl) OR empty($tbl)) ? self::TBL : $tbl;
-		$result = $db->query("SELECT COUNT(*) as COUNTER FROM $tbl")->all();
-		return $result['COUNTER'];
+		$result = $db->query("SELECT COUNT(*) as counter FROM $tbl")->all();
+		return $result[0]['counter'];
 	}
 
     /**
      * Определение последнего ID в таблице
      *
      * @param string    $db     Екземпляр соединения
-     * @param null      $tbl    таблица
+     * @param string    $tbl    таблица
+     * @param string    $id     имя столбца для подсчета
      * @return mixed
      */
     public function lastId($db, $tbl, $id='id')
 	{
 		$result = $db->query("SELECT $id FROM $tbl ORDER BY $id DESC ")->all();
+        if(!isset($result[0][$id]))
+            return 1;
         return $result[0][$id];
 	}
 
-    /*Не реализовано*/
-	public function generateTable($db = 'db', $tbl){}
+    /*Не реализовано еще*/
+	public function createTable($db = 'db', $tbl){}
     public function createColumn($db = 'db', $tbl = null){}
     public function removeColumn($db = 'db', $tbl = null){}
-    public function delete($db = 'db', $tbl = null){}
+    public function deleteTable($db = 'db', $tbl = null){}
 	
 } // END CLASS 'Model'

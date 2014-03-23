@@ -268,7 +268,7 @@ class ControllerIndex extends Ctrl
 				
 					if(!empty($value['text'])){
 						$textRenamed = str_replace( $tagsR, $tagsS, htmlspecialchars($value['text'], ENT_NOQUOTES, "UTF-8")); 
-					$addedText = str_replace();
+					//$addedText = str_replace();
 					$result['text'] .= '
 						    <span class="doc-btn">Подробней</span>
 						    <div class="toggle" style="display:none">

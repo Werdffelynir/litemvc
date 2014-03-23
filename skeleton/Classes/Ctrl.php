@@ -15,7 +15,7 @@ class Ctrl extends Controller
     /* Метод отрабатываеться до выполнения  */
     function before()
     {
-        // Установка языка
+        // Установка выяснения языка
         App::initLang();
         
         // Подключения класса авторизации Classes/Auth.php
@@ -24,8 +24,16 @@ class Ctrl extends Controller
         $this->id = Auth::$id;
         $this->user = Auth::$user;
 
-        $this->setChunk("topMenu", "chunks/topMenu");
-        $this->setChunk("langBox", "chunks/langBox");
+		// подключения чанка горизонтального меню
+        $this->setChunk("topMenu", "chunks/top_menu");
+        // подключения чанка языковой панели
+        $this->setChunk("langBox", "chunks/top_lang");
+
+		// подключения чанка правая панель вход для пользователя или инфо авторизированого
+        $this->setChunk('rightOne','chunks/r_sidebar_user');
+
+		// подключения чанка правая панель инфо и системе
+        $this->setChunk('rightTwo','chunks/r_sidebar_info');
     }
 
     /**

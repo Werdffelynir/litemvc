@@ -13,7 +13,10 @@ class Docs extends Model
     const COL_TEXT    = 'text';
     const COL_PAGE_ID = 'page_id';
 
+
     /**
+     *
+     *
      * @param string $className
      * @return mixed
      */
@@ -21,18 +24,6 @@ class Docs extends Model
     {
         return parent::model($className);
     }
-
-	/** USE 
-	Нужно построить стандартнуую модель с методами
-	- выборка всего (вместить два следующих)
-	- выборка одного|всего по id
-	- выборка одного|всего по атрибуту
-	- удаление по id
-	- updete
-	- insert
-	- count
-	- lest id
-	************************************************************ **/
 
     
     public function queryAll()

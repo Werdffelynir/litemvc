@@ -46,12 +46,25 @@ class SimplePDO
      */
     private $port;
 
+    /**
+     * @var array
+     */
+    private $config;
+
 	/**
 	 * Класспринимет конфиг приложения, создает создет екземпляры PDO
 	 * @param array $config
 	 */
-	public function __construct(array $config)
+    public function __construct(array $config)
     {
+        $this->config = $config;
+        $this->init();
+    }
+	public function init(array $config=null)
+    {
+        if($config==null)
+            $config = $this->config;
+
         $this->port = (isset($config['port'])) ? "port=" . $config['port'] . ";" : "";
         if (!empty($config['driver'])) {
 	        
@@ -82,16 +95,40 @@ class SimplePDO
      *
      * @param $sql
      * @return mixed Колчество затронутых строк
-     */
+
+    public function exec($sql)
+    {
+        if ($this->dbh == null)
+            App::ExceptionError("Connection with DataBase closed!");
+
+        self::$sql = $sql;
+
+        try {
+            return $this->dbh->exec($sql);
+        } catch (PDOException $e) {
+            echo $e->getMessage();
+        }
+
+    } */
     public function exec($sql)
     {
         if ($this->dbh == null)
             die("Connection with DataBase closed!");
 
         self::$sql = $sql;
-        $count = $this->dbh->exec($sql);
+
+        try {
+            $count = $this->dbh->exec($sql);
+        } catch (PDOException $e) {
+            echo $e->getMessage();
+        }
+
+        if(!$count)
+            App::ExceptionError('Error SQL string!', 'Check your query string, error can be names :<br><span style="color:red">'.$sql.'</span>');
+
         return $count;
     }
+
 
 
     /**
@@ -156,7 +193,7 @@ class SimplePDO
      * @param  string	$type 	использует FETCH_ASSOC, FETCH_CLASS, и FETCH_OBJ.
      * @return mixed
      */
-	public function row($type = "assoc")
+	public function row($type = 'assoc')
     {
         if ($type == "assoc") $this->sth->setFetchMode(PDO::FETCH_ASSOC);
         if ($type == "obj") $this->sth->setFetchMode(PDO::FETCH_OBJ);
@@ -170,7 +207,7 @@ class SimplePDO
      * @param  $type
      * @return array
      */
-    public function all($type = "assoc")
+    public function all($type = 'assoc')
     {
         if ($type == "assoc") $this->sth->setFetchMode(PDO::FETCH_ASSOC);
         if ($type == "obj") $this->sth->setFetchMode(PDO::FETCH_OBJ);
@@ -195,7 +232,7 @@ class SimplePDO
      *          'datetime'  =>'SOME DATETIME',
      *          'author'    =>'SOME AUTHOR',
      *      ));
-     * Сгенерирует:
+     * С генерирует SQL запрос:
      * "INSERT INTO pages (title,link,content,datetime,author)
      *      VALUES (:title,:link,:content,:datetime,:author)"
      * и подставит необходимые значения.
@@ -216,7 +253,10 @@ class SimplePDO
             $constructSql .= ")";
 
             //$resultUpdate = $this->dbh->query($constructSql, $dataValue);
+
             $this->sth = $this->dbh->prepare($constructSql);
+            //var_dump($dataValue);
+            //die;
             $resultInsert = $this->sth->execute($dataValue);
             return $resultInsert;
         } else {
@@ -300,7 +340,7 @@ class SimplePDO
 
 	/**
 	 * Обертка удаления
-	 * ->update( 'table', 'key=val' || array('key=:key', array('key'=>val));
+	 * ->delete( 'table', 'key=val' || array('key=:key', array('key'=>val));
 	 * ->delete('Users','id=21');
 	 * ->delete('Users', array('id=:id', array('id'=>'21'));
 	 *
@@ -326,8 +366,8 @@ class SimplePDO
 
 
     /**
-     * Выберает все записи с указаной таблицы.
-     * Если указан второй аргумент выбирает только те что вказаны в нем
+     * Выбирает все записи с указанной таблицы.
+     * Если указан второй аргумент выбирает только те поля что вказаны в нем
      *
      * <pre>
      * Например:
@@ -345,12 +385,13 @@ class SimplePDO
      * </pre>
      *
      * @param string            $tbl    название таблицы
-     * @param null|string|array $data   если string через запятую, выберает указаные,
+     * @param null|string|array $data   если string через запятую, выберает указаные поля,
      *                                  если array по значених выберает указаные
      * @param string            $where  Часть запроса SQL where
+     * @param string            $order  Часть запроса SQL order
      * @return mixed
      */
-    public function getAll($tbl, $data = null, $where = '')
+    public function getAll($tbl, $data = null, $where = '', $order='')
     {
         $sql = '';
         if ($data == null) {
@@ -362,6 +403,7 @@ class SimplePDO
             $sql = "SELECT " . $column . " FROM " . $tbl;
         }
         $sql .= (!empty($where)) ? ' WHERE ' . $where : '';
+        $sql .= (!empty($order)) ? ' ORDER BY ' . $order : '';
         return $this->query($sql)->all();
     }
 
@@ -420,25 +462,28 @@ class SimplePDO
      *      "author"
      * ));
      *
+     * ->getByAttr("table", "column", "column_value", null, "AND link='my_link'");
+     *
      * </pre>
      *
-     * @param $tbl      название таблицы
-     * @param $attr     название колонки
-     * @param $attrVal  значение в колонке
-     * @param $data (string|array)
-     *                  если string через запятую, выберает указаные,
-     *                  если array по значених выберает указаные
+     * @param string            $tbl        название таблицы
+     * @param string            $attr       название колонки
+     * @param string            $attrVal    значение в колонке
+     * @param string            $andWhere   AND WHERE
+     * @param string|array      $data       если string через запятую, выберает указаные, если array по значених выберает указаные
      * @return array
      */
-    public function getByAttr($tbl, $attr, $attrVal, $data = null)
+    public function getByAttr($tbl, $attr, $attrVal, $data = null, $andWhere=null)
     {
+        $setWhere = ($andWhere!=null) ? $andWhere : '';
+
         if ($data == null) {
-            $sql = "SELECT * FROM " . $tbl . " WHERE " . $attr . "='" . $attrVal . "'";
+            $sql = "SELECT * FROM " . $tbl . " WHERE " . $attr . "='" . $attrVal . "' ".$setWhere." ";
         } elseif (is_string($data)) {
-            $sql = "SELECT " . $data . " FROM " . $tbl . " WHERE " . $attr . "='" . $attrVal . "'";
+            $sql = "SELECT " . $data . " FROM " . $tbl . " WHERE " . $attr . "='" . $attrVal . "' ".$setWhere."";
         } elseif (is_array($data)) {
             $column = implode(", ", $data);
-            $sql = "SELECT " . $column . " FROM " . $tbl . " WHERE " . $attr . "='" . $attrVal . "'";
+            $sql = "SELECT " . $column . " FROM " . $tbl . " WHERE " . $attr . "='" . $attrVal . "' ".$setWhere."";
         }
 
         return $this->query($sql)->row();
@@ -465,14 +510,15 @@ class SimplePDO
      * @param string        $tbl        Таблица
      * @param string        $attr       По атрибуту, колонке
      * @param string        $attrVal    Значение $attr по которому делается поиск
+     * @param string        $andWhere
      * @param string|array  $data       Поля что  нужно выбрать
      *                                      если string через запятую, выберает указаные,
      *                                      если array по значених выберает указаные
-     * @return array
+     * @return mixed
      */
-    public function getAllByAttr($tbl, $attr, $attrVal, $andWhere=null, $data=null)
+    public function getAllByAttr($tbl, $attr, $attrVal, $data=null, $andWhere=null)
     {
-		$setWhere = (!is_null($andWhere)) ? $andWhere : '';
+		$setWhere = ($andWhere!=null) ? $andWhere : '';
 	    
         if ($data == null) {
             $sql = "SELECT * FROM " . $tbl . " WHERE " . $attr . "='" . $attrVal . "' ".$setWhere." ";
@@ -493,6 +539,13 @@ class SimplePDO
     {
         $this->dbh = null;
         unset($this->dbh);
+    }
+
+    public function reset()
+    {
+        $this->sth = null;
+        $this->dbh = null;
+        $this->init();
     }
 
 } // END CLASS 'SimplePDO'
