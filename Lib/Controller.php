@@ -390,6 +390,8 @@ class Controller
         $this->urlArgs('article')   - sun-light
         $this->urlArgs('getArray')  - массив всех элементов "Array ( [1] => edit [2] => page [3] => id [4] => 215 [5]..."
         $this->urlArgs('getString') - строку всех элементов "edit/page/id/215/article/sun-light"
+        $this->urlArgs('getController') - строку всех элементов "edit/page/id/215/article/sun-light"
+        $this->urlArgs('getMethod') - строку всех элементов "edit/page/id/215/article/sun-light"
         $this->urlArgs('edit', 3)   - 215 (3 шага от 'edit')
      * </pre>
      * 
@@ -417,6 +419,12 @@ class Controller
         // отдает все елементы в строке
         }elseif($param == 'getString'){
             return App::$requestLine;
+
+        }elseif($param == 'getController'){
+            return App::$controller;
+
+        }elseif($param == 'getMethod'){
+            return App::$method;
 
         // отдает елемент следующий после указаного 
         }else{

@@ -126,7 +126,10 @@ class Model
 	{
 		#$tbl = (is_null($tbl) OR empty($tbl)) ? self::TBL : $tbl;
 		$result = $db->query("SELECT COUNT(*) as counter FROM $tbl")->all();
-		return $result[0]['counter'];
+        if(!isset($result[0]['counter']))
+		    return $result[0]['counter'];
+        else
+            return false;
 	}
 
     /**
@@ -140,9 +143,10 @@ class Model
     public function lastId($db, $tbl, $id='id')
 	{
 		$result = $db->query("SELECT $id FROM $tbl ORDER BY $id DESC ")->all();
-        if(!isset($result[0][$id]))
+        if(isset($result[0][$id]))
+            return $result[0][$id];
+        else
             return 1;
-        return $result[0][$id];
 	}
 
     /*Не реализовано еще*/
