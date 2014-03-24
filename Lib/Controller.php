@@ -446,8 +446,10 @@ class Controller
 	public function model($modelName)
     {
         if (class_exists($modelName)) {
-            $model = new $modelName();
-            return (object) $model;                   
+            //$model = new $modelName();
+            //return (object) $model;
+            $modelName = ucfirst($modelName);
+            return $modelName::model();
         }else{
             if(App::$debug)
                 App::ExceptionError('ERROR model class not exists!',$modelName);

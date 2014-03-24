@@ -163,7 +163,7 @@ class SimplePDO
      * @param string $sql Принимает открытый SQL запрос или безопасный
      * @param array $data Значения для безопасного запроса
      * @return $this        Возвращает екземпляр обекта
-     */
+
     public function query($sql, array $data = null)
     {
 
@@ -183,6 +183,28 @@ class SimplePDO
             $this->sth->execute($data);
         }
         return $this;
+    }*/
+    public function query($sql, array $data = null)
+    {
+        if ($this->dbh == null) {
+            die("Connection with DataBase closed!");
+        }
+
+        self::$sql = $sql;
+
+        if (is_null($data)) {
+            $this->sth = $this->dbh->prepare($sql);
+            if(!$this->sth)
+                App::ExceptionError('Error SQL string!', 'Check your query string, error can be names :<br><span style="color:red">'.$sql.'</span>');
+            $this->sth->execute();
+        } else {
+            $this->sth = $this->dbh->prepare($sql);
+            if(!$this->sth)
+                App::ExceptionError('Error SQL string!', 'Check your query string, error can be names :<br><span style="color:red">'.$sql.'</span>');
+            $this->sth->execute($data);
+        }
+        return $this;
+
     }
 
 
