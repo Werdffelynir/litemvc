@@ -120,7 +120,7 @@ class Docs extends Model
 
     public function queryByClass($class, $where='')
     {
-        $result = $this->db->getAllByAttr(self::TBL, 'class', $class, $where);
+        $result = $this->db->getAllByAttr(self::TBL, 'class', $class, null, $where);
         if(!empty($result)) return $result;
         else return false;
     }

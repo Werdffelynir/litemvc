@@ -286,7 +286,7 @@ class App
     private function autoloadClasses()
     {
         spl_autoload_register(array($this, 'systemsClasses'));
-        spl_autoload_register(array($this, 'componentsClasses'));
+        spl_autoload_register(array($this, 'classesClasses'));
         spl_autoload_register(array($this, 'modelsClasses'));
 
     }
@@ -303,7 +303,7 @@ class App
         if ($className == 'App')
             return false;
 
-        set_include_path(ROOT);
+        set_include_path(SYSTEM);
         spl_autoload_extensions(".php");
         spl_autoload($className);
     }
@@ -315,8 +315,9 @@ class App
     private static function autoloadHelpers()
     {
         if (!empty(self::$_helpers)) {
+
             $autoload = self::$_helpers;
-            $path = ROOT . self::$config['appDir'] . DS . 'Helpers' . DS;
+            $path = APP . 'Helpers' . DS;
 
             foreach ($autoload as $file)
                 if (file_exists($path . $file . '.php'))
@@ -329,31 +330,20 @@ class App
      *
      * @param $className
      */
-    private function componentsClasses($className)
+    private function classesClasses($className)
     {
-        if (isset(self::$config['appDir'])) {
-            $appDir = self::$config['appDir'];
-        } else {
-            $appDir = 'App';
-        }
-
-        set_include_path(ROOT . $appDir . DS . 'Classes');
+        set_include_path(APP.'Classes');
         spl_autoload_extensions(".php");
         spl_autoload($className);
     }
+
 
     /**
      * Авто загрузка моделей приложения.
      */
     private function modelsClasses($className)
     {
-        if (isset(self::$config['appDir'])) {
-            $appDir = self::$config['appDir'];
-        } else {
-            $appDir = 'App';
-        }
-
-        set_include_path(ROOT . $appDir . DS . 'Models');
+        set_include_path(APP . 'Models');
         spl_autoload_extensions(".php");
         spl_autoload($className);
     }

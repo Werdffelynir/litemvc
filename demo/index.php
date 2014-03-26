@@ -17,13 +17,22 @@ error_reporting(E_ALL);
 
 // Рабочие константы
 define('DS', DIRECTORY_SEPARATOR);
-define('APP', __DIR__.DS);
+
+// Директория корная
 define('ROOT', dirname(__DIR__).DS);
+
+// Директория приложения
+define('APP', __DIR__.DS);
+
+// Директория системы
+define('SYSTEM', ROOT.'Lib'.DS);
+
+// Директория шаблона
 define('LAYOUT', APP.'Views'.DS.'layout'.DS);
 
 
-//
-include( ROOT.'lib'.DS.'App.php' );
+// Подключение ядра
+include( SYSTEM.'App.php' );
 
 
 //Конфигурационные настройки приложения
