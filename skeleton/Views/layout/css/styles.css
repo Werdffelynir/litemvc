@@ -57,8 +57,13 @@ h1,h2{ margin: 3px 0; }
 p{ margin: 6px 0; }
 a{}
 a:hover{}
-ul,ol{}
-li{}
+ul,ol{margin: 3px 0;}
+li{
+	margin-left: 15px;
+	margin-bottom: 3px;
+	color: #424549;
+	font-style: italic;
+}
 
 
 
@@ -118,6 +123,23 @@ li{}
     padding: 4px;
     background: #6666CC;
     color: #FFFFFF;
+}
+.colTwoRight h4{
+	margin: 3px 0 4px 0;
+}
+.btnLogin{
+	margin: 10px 0 20px 0;
+}
+.btnLogin>a{
+	padding: 4px 10px;
+	text-align: center;
+	text-decoration: none;
+	font-weight: bold;
+	color: #003366;
+	background: #e0dff2;
+	border: 1px solid #c1c5f2;
+	border-radius: 4px;
+	box-shadow: 0 0 2px #1F385C;
 }
 
 

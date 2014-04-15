@@ -5,9 +5,9 @@ function lMenu($m='index'){
 }
 ?>
 <ul class="topMenu">
-    <li><a <?php lMenu('index');?> href="<?php App::url()?>/">Главная</a></li>
-    <li><a <?php lMenu('info');?> href="<?php App::url()?>/index/info">Информация</a></li>
-    <li><a <?php lMenu('about');?> href="<?php App::url()?>/index/about">О нас</a></li>
-    <li><a <?php lMenu('contacts');?> href="<?php App::url()?>/index/contacts">Контакты</a></li>
+    <li><a <?php lMenu('index');?> href="<?php App::url()?>/"> <?App::lang('topMenuMain',1)?> </a></li>
+    <li><a <?php lMenu('info');?> href="<?php App::url()?>/index/info"><?App::lang('topMenuInfo',1)?></a></li>
+    <li><a <?php lMenu('about');?> href="<?php App::url()?>/index/about"><?App::lang('topMenuAbout',1)?></a></li>
+    <li><a <?php lMenu('contacts');?> href="<?php App::url()?>/index/contacts"><?App::lang('topMenuContacts',1)?></a></li>
 </ul>
 

@@ -312,6 +312,43 @@ class Controller
     }
 
 
+    public function setChunkLang( $chunkName, $chunkView='', array $dataChunk=null, $returned=false )
+    {
+      // Если $chunkView передан как пустая строка, создается заглушка
+      if(empty($chunkView)) {
+        return $this->chunk[$chunkName] = '';
+      }elseif(substr($chunkView, 0, 2) == '//'){
+        $chunkView = substr($chunkView, 2);
+        //$viewInclude = ROOT.App::$config['appPath'].DS.$chunkView.'.php';
+        $viewInclude = $chunkView.'_'.App::$langCode.'.php';
+      }else{
+        //$viewInclude = ROOT.App::$config['appPath'].DS.'Views'.DS.$chunkView.'.php';
+        $viewInclude = 'Languages'.DS.$chunkName.'_'.App::$langCode.'.php';
+      }
+
+      // Если вид чанка не существует отображается ошибка
+      if(!file_exists($viewInclude)){
+        if(App::$debug) {
+          App::ExceptionError('ERROR! File not exists!', $viewInclude);
+        } else {
+          return null;
+        }
+      }
+
+      ob_start();
+
+      if(!empty($dataChunk))
+        extract($dataChunk);
+
+      include $viewInclude;
+
+      if(!$returned)
+        $this->chunk[$chunkName] = ob_get_clean();
+      else
+        return ob_get_clean();
+    }
+
+
     /**
      * Вызов зарегистрированного чанка. Первый аргумент имя зарегестрированого чанка
      * второй тип возврата метода по умолчанию ECHO, если FALSE данные будет возвращены
