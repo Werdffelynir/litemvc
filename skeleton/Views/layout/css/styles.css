@@ -110,8 +110,8 @@ li{
 /*top menu*/
 .topMenu{ height: 26px; list-style: none; text-align: center; padding: 0; margin:0}
 .topMenu li{ display: inline-block; text-align: center; }
-.topMenu li a{ line-height:26px; padding: 7px 15px; text-decoration: none;  font-size: 10px; font-weight: bold; color: #6666CC; }
-.topMenu li a:hover{ background: #6666CC; color: #fff; }
+.topMenu>li>a{ line-height:26px; padding: 7px 15px; text-decoration: none;  font-size: 11px; font-weight: bold; color: #6666CC; font-style: normal; text-transform: uppercase;}
+.topMenu>li>a:hover{ background: #6666CC; color: #fff; }
 .active{ background: #6666CC; color: #fff !important; }
 
 
