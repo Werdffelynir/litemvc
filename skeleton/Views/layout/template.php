@@ -6,14 +6,13 @@
     <meta http-equiv="Content-type" content="text/html; charset=UTF-8" />
     <meta data-url="<?php App::url(); ?>" data-url-theme="<?php App::url('theme'); ?>" />
 	<link rel="stylesheet" type="text/css" href="<?php App::url('theme'); ?>/css/styles.css" />
-	
+
     <script type="text/javascript" src="<?php App::url('theme'); ?>/js/jquery-2.1.0.min.js"></script>
     <script type="text/javascript" src="<?php App::url('theme'); ?>/js/scripts.js"></script>
 </head>
 <body>
 
 	<div id="page">
-
 
 		<div id="header" class="lite clear">
 	        <div class="first lite_10 logo_block">liteMVC <small>skeleton</small></div>

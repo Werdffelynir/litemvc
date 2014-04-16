@@ -1,0 +1,826 @@
+Определяет зависимость типа «один ко многим» между объектами таким образом, 
+что при изменении состояния одного объекта все зависящие от него оповещаются об этом событии.
+
+При реализации шаблона «наблюдатель» обычно используются следующие классы.
+
+    Observable — интерфейс, определяющий методы для добавления, удаления и оповещения наблюдателей.
+    Observer — интерфейс, с помощью которого наблюдатель получает оповещение.
+    ConcreteObservable — конкретный класс, который реализует интерфейс Observable.
+    ConcreteObserver — конкретный класс, который реализует интерфейс Observer.
+
+Область применения
+Шаблон «наблюдатель» применяется в тех случаях, когда система обладает следующими свойствами:
+    существует, как минимум, один объект, рассылающий сообщения
+    имеется не менее одного получателя сообщений, причём их количество и состав могут изменяться во время работы приложения.
+    нет надобности очень сильно связывать взаимодействующие объекты, что полезно для повторного использования.
+
+Данный шаблон часто применяют в ситуациях, в которых отправителя сообщений не интересует, что делают получатели с предоставленной им информацией.
+
+[h]Observer (1)[/h]
+[code=php]
+
+<?php
+
+interface Observer{
+    function notify($obj);
+}
+  
+class ExchangeRate{
+    static private $instance = NULL;
+    private $observers = array();
+    private $exchange_rate;
+  
+    private function __construct(){}
+    private function __clone(){}
+  
+    static public function getInstance(){
+        if(self::$instance == NULL){
+            self::$instance = new ExchangeRate();
+        }
+        return self::$instance;
+    }
+  
+    public function getExchangeRate(){
+        return $this->exchange_rate;
+    }
+  
+    public function setExchangeRate($new_rate){
+        $this->exchange_rate = $new_rate;
+        $this->notifyObservers();
+    }
+  
+    public function registerObserver(Observer $obj){
+        $this->observers[] = $obj;
+    }
+  
+    function notifyObservers(){
+        foreach($this->observers as $obj){
+            $obj->notify($this);
+        }
+    }
+}
+  
+class ProductItem implements Observer{
+  
+    public function __construct(){
+        ExchangeRate::getInstance()->registerObserver($this);
+    }
+  
+    public function notify($obj){
+        if($obj instanceof ExchangeRate) {
+            // Update exchange rate data
+            print "Received update!\n";
+        }
+    }
+}
+  
+$product1 = new ProductItem();
+$product2 = new ProductItem();
+  
+ExchangeRate::getInstance()->setExchangeRate(4.5);
+[/code]
+
+
+
+[h]Observer (2) Observer с помощю Анонимных функций и __invoke()[/h]
+[code=php]
+
+//Анонимные функции.
+//Анонимные функции позволяют нам создавать callback'и, фактически на месте, не объявляя никаких функций в основном коде.
+
+//__invoke()
+//Благодаря новому магическому методу, мы можем переопределять событие, происходящее при вызове объекта. Т.е., фактически, к объекту можно обращаться как к функции.
+
+class Event extends ArrayObject {
+    public function __invoke() {
+        foreach($this as $callback)
+            call_user_func_array($callback, func_get_args());
+    }
+}
+
+class Eventable {
+    public function __call($name, $args) {
+        if( method_exists($this, $name) )
+            call_user_func_array(array(&$this, $name), $args);
+        else
+            if( isset($this->{$name}) && is_callable($this->{$name}) )
+                call_user_func_array($this->{$name}, $args);
+    }
+}
+
+class Test extends Eventable {
+    public $onA = array();
+    
+    public function __construct() {
+        $this->onA = new Event();
+    }
+    
+    public function A($txt) {
+        $this->onA("This is A.", $txt);
+    }
+}
+
+
+
+$test = new Test();
+
+/* setting up callbacks */
+$test->onA[] = function($msg, $txt) {
+    echo "This is the event! <br />";
+};
+
+$test->onA[] = function($msg, $txt) {
+    echo "<b>Message</b>: $msg. <b>Text</b>: $txt <br />";
+};
+
+$test->onA[] = function($msg, $txt) {
+    echo "Works great! <br />";
+};
+
+/* call */
+$test->A("Le Test");
+
+
+// в качестве callback'ов можно указывать не только анонимные функции, но и объявленные нормально и даже методы классов!
+$test->onA[] = "some_function";
+$test->onA[] = array(&$some_object, "some_method");
+[/code]
+
+
+[h]Observer (3) PHP5 (SPL) (ВИКИ)[/h]
+[code=php]
+
+/**
+ * В PHP осуществляется встроенная поддержка этого шаблона через входящее в поставку
+ * расширение SPL (Standard PHP Library):
+ * SplObserver - интерфейс для Observer (наблюдателя),
+ * SplSubject - интерфейс Observable (наблюдаемого),
+ * SplObjectStorage - вспомогательный класс (обеспечивает улучшенное сохранение и удаление
+ * объектов, в частности, реализованы методы attach() и detach()).
+ */
+class Observable implements SplSubject
+{
+    private $storage;
+
+    function __construct() {
+        $this->storage = new SplObjectStorage();
+    }
+ 
+    function attach(SplObserver $observer) {
+        $this->storage->attach($observer);
+    }
+ 
+    function detach(SplObserver $observer) {
+        $this->storage->detach($observer);
+    }
+ 
+    function notify() {
+        foreach($this->storage as $obj) {
+            $obj->update($this);
+        }
+    }
+    //...
+}
+ 
+abstract class Observer implements SplObserver
+{
+    private $observable;
+ 
+    function __construct(Observable $observable) {
+        $this->observable = $observable;
+        $observable->attach($this);
+    }
+ 
+    function update(SplSubject $subject) {
+        if($subject === $this->observable) {
+            $this->doUpdate($subject);
+        }
+    }
+ 
+    abstract function doUpdate(Observable $observable);
+}
+ 
+class ConcreteObserver extends Observer
+{
+    function doUpdate(Observable $observable) {
+        //...
+    }
+}
+ 
+$observable = new Observable();
+ 
+new ConcreteObserver($observable);
+
+
+[/code]
+###############################################################################
+##########  PHP5 (ВИКИ)
+ 
+interface Observer
+{
+    function notify($obj);
+}
+ 
+class ExchangeRate
+{
+    static private $instance = NULL;
+    private $observers = array();
+    private $exchange_rate;
+ 
+    private function __construct() {}
+ 
+    private function __clone() {}
+ 
+    static public function getInstance() {
+        if(self::$instance == NULL) {
+            self::$instance = new ExchangeRate();
+        }
+        return self::$instance;
+    }
+ 
+    public function getExchangeRate() {
+        return $this->exchange_rate;
+    }
+ 
+    public function setExchangeRate($new_rate) {
+        $this->exchange_rate = $new_rate;
+        $this->notifyObservers();
+    }
+ 
+    public function registerObserver(Observer $obj) {
+        $this->observers[] = $obj;
+    }
+ 
+    function notifyObservers() {
+        foreach($this->observers as $obj) {
+            $obj->notify($this);
+        }
+    }
+}
+ 
+class ProductItem implements Observer
+{
+ 
+    public function __construct() {
+        ExchangeRate::getInstance()->registerObserver($this);
+    }
+ 
+    public function notify($obj) {
+        if($obj instanceof ExchangeRate) {
+            // Update exchange rate data
+            print "Received update!\n";
+        }
+    }
+}
+ 
+$product1 = new ProductItem();
+$product2 = new ProductItem();
+ 
+ExchangeRate::getInstance()->setExchangeRate(4.5);
+
+
+
+
+
+###############################################################################
+##########  Интерфейс SplObserver
+
+/**
+ * Обект, который делает новости
+ */
+class Newspaper implements \SplSubject{
+    private $name;
+    private $observers = array();
+    private $content;
+   
+    public function __construct($name) {
+        $this->name = $name;
+    }
+
+    //добавление observer
+    public function attach(\SplObserver $observer) {
+        $this->observers[] = $observer;
+    }
+   
+    //удаление observer
+    public function detach(\SplObserver $observer) {
+       
+        $key = array_search($observer,$this->observers, true);
+        if($key){
+            unset($this->observers[$key]);
+        }
+    }
+    
+    //установка розделителя(breakouts) новостей
+    public function breakOutNews($content) {
+        $this->content = $content;
+        $this->notify();
+    }
+   
+    public function getContent() {
+        return $this->content." ({$this->name})";
+    }
+    
+    //уведомить observers (или некоторых из них)
+    public function notify() {
+        foreach ($this->observers as $value) {
+            $value->update($this);
+        }
+    }
+}
+
+/**
+ * Observer, который получает новости
+ */
+class Reader implements SplObserver{
+    private $name;
+   
+    public function __construct($name) {
+        $this->name = $name;
+    }
+   
+    public function update(\SplSubject $subject) {
+        echo $this->name.' читает новости прорыва <b>'.$subject->getContent().'</b><br>';
+    }
+}
+
+// ТЕСТ:
+$newspaper = new Newspaper('"Вести Киева"');
+
+$vasia  = new Reader('Вася');
+$masha  = new Reader('Маша');
+$petia  = new Reader('Петя');
+
+//Добавление читателя
+$newspaper->attach($vasia);
+$newspaper->attach($masha);
+$newspaper->attach($petia);
+
+//удаление читателя
+$newspaper->detach($petia);
+
+//установка разделителя (break outs)
+$newspaper->breakOutNews('USA Умерает!');
+
+//===== результат ======
+//Вася читает новости прорыва USA Умерает! ("Вести Киева")
+//Маша читает новости прорыва USA Умерает! ("Вести Киева")
+
+
+
+###############################################################################
+##########  Еще одна реализация паттерна с помощу абстрактных классов
+
+abstract class AbstractObserver {
+    abstract function update(AbstractSubject $subject_in);
+}
+
+abstract class AbstractSubject {
+    abstract function attach(AbstractObserver $observer_in);
+    abstract function detach(AbstractObserver $observer_in);
+    abstract function notify();
+}
+
+function writeln($line_in) {
+    echo $line_in."<br/>";
+}
+
+class PatternObserver extends AbstractObserver {
+    public function __construct() {
+    }
+    public function update(AbstractSubject $subject) {
+      writeln('*IN PATTERN OBSERVER - NEW PATTERN GOSSIP ALERT*');
+      writeln(' new favorite patterns: '.$subject->getFavorites());
+      writeln('*IN PATTERN OBSERVER - PATTERN GOSSIP ALERT OVER*');      
+    }
+}
+
+class PatternSubject extends AbstractSubject {
+    private $favoritePatterns = NULL;
+    private $observers = array();
+    function __construct() {
+    }
+    function attach(AbstractObserver $observer_in) {
+      //could also use array_push($this->observers, $observer_in);
+      $this->observers[] = $observer_in;
+    }
+    function detach(AbstractObserver $observer_in) {
+      //$key = array_search($observer_in, $this->observers);
+      foreach($this->observers as $okey => $oval) {
+        if ($oval == $observer_in) { 
+          unset($this->observers[$okey]);
+        }
+      }
+    }
+    function notify() {
+      foreach($this->observers as $obs) {
+        $obs->update($this);
+      }
+    }
+    function updateFavorites($newFavorites) {
+      $this->favorites = $newFavorites;
+      $this->notify();
+    }
+    function getFavorites() {
+      return $this->favorites;
+    }
+}
+
+  writeln('BEGIN TESTING OBSERVER PATTERN');
+  writeln('');
+
+  $patternGossiper = new PatternSubject();
+  $patternGossipFan = new PatternObserver();
+  $patternGossiper->attach($patternGossipFan);
+  $patternGossiper->updateFavorites('abstract factory, decorator, visitor');
+  $patternGossiper->updateFavorites('abstract factory, observer, decorator');
+  $patternGossiper->detach($patternGossipFan);
+  $patternGossiper->updateFavorites('abstract factory, observer, paisley');
+
+  writeln('END TESTING OBSERVER PATTERN');
+
+?>
+
+BEGIN TESTING OBSERVER PATTERN *IN PATTERN OBSERVER - NEW PATTERN GOSSIP ALERT* new favorite patterns: abstract factory, decorator, visitor *IN PATTERN OBSERVER - PATTERN GOSSIP ALERT OVER* *IN PATTERN OBSERVER - NEW PATTERN GOSSIP ALERT* new favorite patterns: abstract factory, observer, decorator *IN PATTERN OBSERVER - PATTERN GOSSIP ALERT OVER* END TESTING OBSERVER PATTERN
+
+
+
+###############################################################################
+##########  Мой Вариант с использованием внешних функций
+class MySubject implements SplSubject {
+    protected $_observers = [];
+    public function attach(SplObserver $observer) {
+        $id = spl_object_hash($observer);
+        $this->_observers[$id] = $observer;
+    }
+    public function detach(SplObserver $observer) {
+        $id = spl_object_hash($observer);
+
+        if (isset($this->_observers[$id])) {
+            unset($this->_observers[$id]);
+        }
+    }
+    public $addData = "";
+    public function notify() {
+        foreach ($this->_observers as $observer) {
+            $observer->update($this, $this->addData);
+        }
+    }
+}
+
+class MyObserver implements SplObserver {
+    public function update(SplSubject $subject, $eventData = null) {
+        if (is_null($eventData)){
+            echo "2 param is NULL";
+        }else{;
+            call_user_func($eventData);
+        }
+    }
+}
+
+$subject = new MySubject();
+$observer = new MyObserver();
+$subject->attach($observer);
+
+function my_foo(){ echo "This fron Foo!<br>"; }
+function my_foo_2(){ echo "This fron Foo 2!<br>"; }
+
+$subject->addData = "my_foo";
+$subject->notify();
+
+$subject->addData = "my_foo_2";
+$subject->notify();
+
+$subject->addData = function(){ echo "This Anonimus Foo!<br>"; };
+$subject->notify();
+/* Result:
+This fron Foo!
+This fron Foo 2!
+This Anonimus Foo!
+*/
+
+
+
+###############################################################################
+##########  SplSubject & SplObserver
+
+
+// Common Classes
+abstract class Observable implements SplSubject {
+    protected $_observers = [];
+
+    public function attach(SplObserver $observer) {
+        $id = spl_object_hash($observer);
+        $this->_observers[$id] = $observer;
+    }
+    public function detach(SplObserver $observer) {
+        $id = spl_object_hash($observer);
+        if (isset($this->_observers[$id])) {
+            unset($this->_observers[$id]);
+        }
+    }
+    public function notify() {
+        foreach ( $this->_observers as $observer ) {
+            $observer->update($this);
+        }
+    }
+}
+
+abstract class Observer implements SplObserver {
+    private $observer;
+
+    function __construct(SplSubject $observer) {
+        $this->observer = $observer;
+        $this->observer->attach($this);
+    }
+}
+
+// Load Example Classes
+class Loan extends Observable {
+    private $bank;
+    private $intrest;
+    private $name;
+    function __construct($name, $bank, $intrest) {
+        $this->name = $name;
+        $this->bank = $bank;
+        $this->intrest = $intrest;
+    }
+    function setIntrest($intrest) {
+        $this->intrest = $intrest;
+        $this->notify();
+    }
+    function getIntrest() {
+        return $this->intrest;
+    }
+}
+
+class Online implements SplObserver {
+    public function update(SplSubject $loan) {
+        printf("Online    : Post online about modified Intrest rate of : %0.2f\n",$loan->getIntrest());
+    }
+}
+
+class SMS implements SplObserver {
+    public function update(SplSubject $loan) {
+        printf("Send SMS  : Send SMS to premium subscribers : %0.2f\n",$loan->getIntrest());
+    }
+}
+
+class Email implements SplObserver {
+    public function update(SplSubject $loan) {
+        printf("Send Email: Notify mailing list : %0.2f\n",$loan->getIntrest());
+    }
+}
+
+// User Register Example Classes
+class Users extends Observable {
+    private $name;
+
+    function addUser($name) {
+        $this->name = $name;
+        $this->notify();
+    }
+    function getName() {
+        return $this->name;
+    }
+}
+
+class Audit extends Observer {
+    public function update(SplSubject $subject) {
+        printf("Audit    : Notify Autify about %s\n", $subject->getName());
+    }
+}
+
+class Logger extends Observer {
+    public function update(SplSubject $subject) {
+        printf("Log      : User %s Create at %s\n", $subject->getName(),date(DATE_RFC822));
+    }
+}
+class Security extends Observer {
+    public function update(SplSubject $subject) {
+        if($subject->getName() == "Admin") {
+            printf("Security : Alert trying to create Admin\n");
+        }
+    }
+}
+
+//Example 1. Interest Rate Notification System for a Loan
+$loan = new Loan("Mortage", "Citi Bank", 20.5);
+$loan->attach(new Online());
+$loan->attach(new SMS());
+$loan->attach(new Email());
+echo "<pre>";
+$loan->setIntrest(17.5);
+/*Output
+Online    : Post online about modified Intrest rate of : 17.50
+Send SMS  : Send SMS to premium subscribers : 17.50
+Send Email: Notify mailing list : 17.50
+*/
+
+//Example 2. Simple User Register Monitor
+
+$users = new Users();
+new Audit($users);
+new Logger($users);
+new Security($users);
+$users->addUser("John");
+$users->addUser("Smith");
+$users->addUser("Admin");
+/*Output
+Audit    : Notify Autify about John
+Log      : User John Create at Wed, 28 Aug 13 21:51:51 +0400
+Audit    : Notify Autify about Smith
+Log      : User Smith Create at Wed, 28 Aug 13 21:51:51 +0400
+Audit    : Notify Autify about Admin
+Log      : User Admin Create at Wed, 28 Aug 13 21:51:51 +0400
+Security : Alert trying to create Admin
+*/
+
+
+
+
+###############################################################################
+##########  Еще обин пример obServera на базе SplObserver/SplSubject.
+
+/**
+* класс ExceptionHandler перехватчик событий. Использует паттерн Observer, SplObserver/SplSubject.
+*/
+class ExceptionHandler implements SplSubject
+{
+    /**
+    * Массив объектов SplObserver для уведомления перехватов.
+    * @var array
+    */
+    private $observers = array();
+
+    /**
+    * События, которое должны быть обработаны.
+    * @var Exception
+    */
+    public $exception;
+
+    /**
+    * Constructor метод для ExceptionHandler.
+    * @return ExceptionHandler
+    */
+    function __construct() { }
+
+    /**
+    * Регистрация Классов на базе SplObserver, которые будет уведомлены когда происходят перехват события
+    * @param SplObserver        observer который регистрируеться
+    * @return void
+    */
+    public function attach(SplObserver $obs) {
+        $id = spl_object_hash($obs);
+        $this->observers[$id] = $obs;
+    }
+
+    /**
+    * Отключает зарегистируваный класс на SplObserver, больше не будете получать уведомления о перехваченых событиях
+    * @param SplObserver        observer что отключаеться
+    * @return void
+    */
+    public function detach(SplObserver $obs) {
+        $id = spl_object_hash($obs);
+        unset($this->observers[$id]);
+    }
+
+    /**
+    * Увидомление для всех подключенных зарегестрированых классов observer
+    * @return void
+    */
+    public function notify() {
+        foreach($this->observers as $obs) {
+            $obs->update($this);
+        }
+    }
+
+    /**
+    * Это метод, должен быть установлен по умолчанию, как обработчик ошибок вызываемых кодом.
+    * @return void
+    */
+    public function handle(Exception $e) {
+        $this->exception = $e;
+        $this->notify();
+    }
+}
+
+
+// Подключение сопутствующие классы для обработок перехваченных событий. 
+/**
+* Класс Logger ответственный за логирование произошедших событий, может запивывать лог в файл или БД, для debugging
+*/
+class Logger implements SplObserver
+{
+    /**
+    * Обновляет error_log с информацией о Exception.
+    * @param SplSubject $subject   The ExceptionHandler
+    * @return boolean
+    */
+    public function update(SplSubject $subject) {
+        return error_log($subject->exception);
+    }
+}
+
+//And also a Mailer:
+
+/**
+* Класс Мейлер отвечает за рассылку перехваченых событий администратору для уведомлений.
+*/
+class Mailer implements SplObserver
+{
+    /**
+    * Mail систадмину с информацией
+    * @param SplSubject $subject   The ExceptionHandler
+    * @return boolean
+    */
+    public function update(SplSubject $subject)
+    {
+        // Set up mail here
+        // ...
+    }
+}
+
+/** 
+* Использование: 
+* Код для подключения ExceptionHandler. И прикрепление необходимых наблюдателей.
+*/
+require_once('ExceptionHandler.php');
+require_once('Logger.php');
+require_once('Mailer.php');
+
+// Создание ExceptionHandler
+$handler = new ExceptionHandler();
+
+// Подключене в исключение(Exception) Logger и Mailer
+$handler->attach(new Logger());
+$handler->attach(new Mailer());
+
+// Установка ExceptionHandler::handle() по умолчанию
+set_exception_handler(array($handler, 'handle'));
+
+/*
+attach() – принимает наблюдателей, которые затем сохраняются в объекте
+detach() – удаляет существующий наблюдателя от объекта
+notify() – уведомление всех подключенных наблюдателей
+*/
+
+$handler->notify();
+
+
+
+###############################################################################
+##########  Мой любимый вареант
+
+<?php
+
+/**
+ * Класс на осное шаблона Observer
+ * @author OLWerdffelynir
+ * @copyright 2013
+ */
+interface IObserver
+{
+  function onChanged( $sender, $args );
+}
+
+interface IObservable
+{
+  function addObserver( $observer );
+}
+
+class Hook implements IObservable
+{
+  private $_observers = array();
+
+  public function addEvent( $name )
+  {
+    foreach( $this->_observers as $obs )
+      $obs->onChanged( $this, $name );
+  }
+
+  public function addObserver( $observer )
+  {
+    $this->_observers []= $observer;
+  }
+}
+
+class Hooker implements IObserver
+{
+  public function onChanged( $sender, $args )
+  {
+    $logofile = '../logs/log.txt';
+    file_put_contents($logofile, date("Y-m-d H:i:s") .' > '.$args."\n", FILE_APPEND);
+    
+    $sql = "INSERT INTO user_auto_log (date, log) VALUES (CURRENT_TIMESTAMP, '".$args."') ";
+    ConnectMySQLi::instance()->sqlQuery($sql);
+    
+    echo( "'$args' added to user list\n" );
+  }
+}
+
+$hook = new Hook();
+$hook->addObserver( new Hooker() );
+
+// Использувание
+$hook->addEvent((string) $log); [/code]
