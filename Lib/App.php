@@ -224,9 +224,9 @@ class App
 
         }
 
+        $this->findUrl();
         self::autoloadHelpers();
         $this->autoloadClasses();
-        $this->findUrl();
         $this->runController();
     }
 
@@ -432,6 +432,9 @@ class App
         self::$urlNude = $pathFolder;
         self::$url = "http://" . $httpHostFull;
         self::$urlTheme = "http://" . $httpHostFull . "/" . "Views/layout";
+
+        var_dump( self::$urlNude, self::$url, self::$urlTheme);
+        //die;
     }
 
 
@@ -719,6 +722,7 @@ class App
         }
         if (self::$decodeCook)
             $value = base64_encode($value);
+        var_dump($key, $value, $expire, $path, $domain); die;
         return setcookie($key, $value, $expire, $path, $domain);
     }
 

@@ -38,6 +38,8 @@ class ControllerIndex extends Ctrl {
         //$result = $modelTable->db->exec("INSERT INTO 'table' ('title', 'text') VALUES ('Title three','Text for record three')");
         //var_dump($result);
 
+      //var_dump(App::$url);
+
         if (App::$langCode == 'en') {
             $content = '
           <h1>History of PHP</h1>

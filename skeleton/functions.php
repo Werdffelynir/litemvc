@@ -8,6 +8,7 @@
 define('URL', App::$url);
 define('URL_THEME', App::$urlTheme);
 
+var_dump(App::$url);
 
 
 function limitChars($text, $limit=200, $more=' ... '){
