@@ -1,13 +1,14 @@
 <?php
 
-// устанавка переменной с началом отсчета отработки системы
-list($microtime, $sec) = explode(chr(32), microtime());
-$timeLoader = $sec + $microtime;
+if(file_exists('./functionsBefore.php'))
+  include( './functionsBefore.php' );
+
+// Запуск счетика компиляции приложения
+timerStart();
 
 // отображение всех ошибок
 ini_set("display_errors",1);
 error_reporting(E_ALL);
-
 
 
 /**  *************************************************************************************
@@ -40,8 +41,8 @@ if(file_exists(APP.'config.php')){
 $App = new App($config);
 
 // Подключение вайла для пользовательских функций.
-if(file_exists(APP.'functions.php'))
-    include( APP.'functions.php' );
+if(file_exists('./functionAfter.php'))
+    include( './functionAfter.php' );
 
 // Пуск
 $App->run();

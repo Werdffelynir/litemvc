@@ -125,6 +125,7 @@ class App
 
         $this->findUrl();
         self::autoloadHelpers();
+        $this->autoloadClasses();
     }
 
 
@@ -227,7 +228,7 @@ class App
 
         }
 
-        $this->autoloadClasses();
+
         $this->runController();
     }
 

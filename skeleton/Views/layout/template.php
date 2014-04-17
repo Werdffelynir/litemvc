@@ -32,8 +32,7 @@
 
 		<div id="footer">
 	        <p>Copyright &copy; &mdash; 2014 SunLight, Inc. <a href="http://werd.id1945.com/"> OL Werdffelynir</a>. All rights reserved.
-                <?php global $timeLoader; list($microtime, $sec) = explode(chr(32), microtime());
-                echo 'Was compiled per: ' . round(($sec + $microtime) - $timeLoader, 4) . ' sec.'; ?>
+                <?php echo 'Was compiled per: ' . timerStop() . ' sec.'; ?>
             </p>
 		</div><!--END footer-->
 
