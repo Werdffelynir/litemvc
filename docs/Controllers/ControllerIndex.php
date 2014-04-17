@@ -134,9 +134,10 @@ class ControllerIndex extends Ctrl
     {
         // Формирование контента страницы
         // заголовок страницы
-	    $title = 'Воход в систему';
+	      $title = 'Воход в систему';
+
         // пожключения вида формы авторизации
-	    $content = $this->partial("index/login", array(
+	      $content = $this->partial("index/login", array(
             'login'=>(isset($_POST['login']))?$_POST['login']:'',
             'password'=>(isset($_POST['password']))?$_POST['password']:'',
         ));
@@ -155,23 +156,20 @@ class ControllerIndex extends Ctrl
                     'name'  => $user['name']
                 );
 
-                Auth::identity($user['id'], $publicUserInfo);
+                $resultAuth = Auth::identity($user['id'], $publicUserInfo);
 
-                $title = 'Воход в систему состоялся';
-                $content = '<div><p>Вы успешно авторезируваны как '.$user['name'].'.</p>
-                            <p>Через 3 сек. страница будет автоматически перезагружена!</p></div>';
-
-                $this->render('OUT', 'main', array('title'=>$title, 'content'=>$content)); // вызов Views/page/index.php
-
-                App::redirect($_SERVER["HTTP_REFERER"], 3);
+                if($resultAuth){
+                  $title = 'Воход в систему состоялся';
+                  $content = '<div><p>Вы успешно авторезируваны как '.$user['name'].'.</p><p><a href="'.URL.'/index/index">Дальше</a></p></div>';
+                }
             }
         }
 
         if($this->isAjax()){
             echo $content;
         }else{
-            // вывод, в основной шаблон
             $this->render('OUT', 'main', array('title'=>$title, 'content'=>$content)); // вызов Views/page/index.php
+            App::redirect($_SERVER["HTTP_REFERER"], 3);
         }
     }
 

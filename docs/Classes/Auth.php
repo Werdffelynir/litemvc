@@ -47,6 +47,9 @@ class Auth {
         if(!empty($userData)){
             self::$user = $userData;
             App::setCookie('user', serialize($userData) );
+            return true;
+        }else{
+            return false;
         }
     }
 
