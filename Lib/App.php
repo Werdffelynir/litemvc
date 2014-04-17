@@ -11,6 +11,7 @@ class App
      * @var array $config
      */
     public static $config;
+    public static $isRootDomain = true;
 
     /**
      * включения дебага
@@ -113,23 +114,16 @@ class App
     private $_args = array();
     public static $_helpers = array();
 
-    public function __construct()
-    {
-        $this->autoloadClasses();
-        $this->findUrl();
-    }
-
-    /**
-     * Загрузка конфигурационных параметров приложения
-     * @param $config
-     */
-    public function getConfig(array $config)
+    public function __construct(array $config)
     {
         self::$config = (!empty($config)) ? $config : die('CONFIG DATA NOT FOUND!');
-        $appPathInfo = pathinfo($config['path']);
-        self::$config['appPath'] = $appPathInfo['dirname'] . DS . $appPathInfo['basename'] . DS;
-        self::$config['appDir'] = $appPathInfo['basename'];
+
+        $appPathArray = explode(DS, APP);
+        array_pop( $appPathArray );
+        $appPath = end( $appPathArray );
+        self::$config['appDir'] = $appPath;
     }
+
 
     /**
      * Инициализация системы
@@ -138,15 +132,22 @@ class App
     {
         $parts = explode('/', $_SERVER['REQUEST_URI']);
 
-        foreach ($parts as $k => $v) {
-            if ($v != self::$config['appDir']) {
-                unset($parts[$k]);
-            } else {
-                unset($parts[$k]);
-                break;
+        $appPathCount = substr_count($_SERVER['REQUEST_URI'], self::$config['appDir']);
+
+        if($appPathCount==0){
+            $parts = array_values(array_diff($parts,array("")));
+        }else{
+            self::$isRootDomain = false;
+            foreach ($parts as $k => $v) {
+                if ($v != self::$config['appDir']) {
+                    unset($parts[$k]);
+                } else {
+                    unset($parts[$k]);
+                    break;
+                }
             }
         }
-        $parts = array_values($parts);
+
 
         // Установка определения языка
         if (isset(self::$config['identifyLanguage']))
@@ -200,7 +201,6 @@ class App
         self::$args = $this->_args;
         self::$requestLine = $this->_requestLine;
 
-
         // lang install settings
         /**/
         if (self::$langCode == null) {
@@ -224,7 +224,9 @@ class App
 
         }
 
-
+        self::autoloadHelpers();
+        $this->autoloadClasses();
+        $this->findUrl();
         $this->runController();
     }
 
@@ -233,8 +235,6 @@ class App
      */
     private function runController()
     {
-        // Авто загрузка файлов хелперов установленных в конфигурации
-        self::autoloadHelpers();
 
         // определение названия класса контролера
         $controller = 'Controller' . ucfirst(self::$controller);
@@ -262,7 +262,7 @@ class App
                 // Проверка на существование actions
             } elseif (!empty($actions) AND array_key_exists(self::$method, $actions)) {
                 // если actions в контролере определен и файл вызова существует вызываем его
-                $cationPath = ROOT . self::$config['appDir'] . DS . $actions[self::$method] . '.php';
+                $cationPath = APP . $actions[self::$method] . '.php';
                 if (file_exists($cationPath))
                     require_once($cationPath);
                 else
@@ -369,7 +369,7 @@ class App
             App::setCookie('lang', $langCode);
 
         //$file = App::$appPath.'Languages'.DS.'base'.DS.$langCode.'.php';
-        $file = App::$config['appPath'] . 'Languages' . DS . $langCode . '.php';
+        $file = APP . 'Languages' . DS . $langCode . '.php';
 
         if (file_exists($file))
             $langData = include $file;
@@ -431,11 +431,7 @@ class App
 
         self::$urlNude = $pathFolder;
         self::$url = "http://" . $httpHostFull;
-        self::$urlTheme = "http://" . $httpHostFull . "/" . self::$config["appDir"] . "Views/layout";
-
-        //var_dump( self::$urlNude, self::$url, self::$urlTheme);
-
-
+        self::$urlTheme = "http://" . $httpHostFull . "/" . "Views/layout";
     }
 
 
@@ -634,7 +630,7 @@ class App
      */
     public static function includeFile($file, array $data = null)
     {
-        if (file_exists($fileName = ROOT . App::$config['appDir'] . DS . $file . '.php')) {
+        if (file_exists($fileName = APP. $file . '.php')) {
 
             if ($data != null)
                 extract($data);

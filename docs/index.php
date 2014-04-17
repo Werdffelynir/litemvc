@@ -43,8 +43,7 @@ if(file_exists(APP.'config.php')){
     die('<h1 style="color:#CC0000; text-align:center; margin-top: 100px">App is die! File "config.php" not found!<h1>');
 
 // Инициализация основного класса системы
-$App = new App();
-$App->getConfig($config);
+$App = new App($config);
 
 // Подключение вайла для пользовательских функций.
 if(file_exists(APP.'functions.php'))
