@@ -265,19 +265,21 @@ class App
             } elseif (!empty($actions) AND array_key_exists(self::$method, $actions)) {
                 // если actions в контролере определен и файл вызова существует вызываем его
                 $cationPath = APP . $actions[self::$method] . '.php';
-                if (file_exists($cationPath))
+                if (file_exists($cationPath)) {
                     require_once($cationPath);
-                else
+                } else{
+                    header("HTTP/1.0 404 Not Found");
                     $controllerObj::error404('layout/error404', array('title' => 'Error 404. Page not found!', 'text' => 'Actions request <b>[' . self::$method . ']</b> file <b> ' . $cationPath . '()</b> not exist!'));
-
+                }
             } else {
-
                 // вывод страницы 404. Метод не найден
+                header("HTTP/1.0 404 Not Found");
                 $controllerObj::error404('layout/error404', array('title' => 'Error 404. Page not found!', 'text' => 'Method <b>function ' . $method . '()</b> not exist!'));
             }
 
         } else {
             // вывод страницы 404. Файла контролера нет.
+            header("HTTP/1.0 404 Not Found");
             Controller::error404('layout/error404', array('title' => 'Error 404. Page not found!', 'text' => 'Controller file <b>Controllers/' . $cPath . '</b> not exist!'));
         }
     }
@@ -437,49 +439,62 @@ class App
     }
 
 
-    /**
-     *
-     * @param string $url Переадресация на URL
-     * @param int $delay Редирек с задержкой с секунднах
-     * @param int $code HTTP код заголовка; по умолчанию 302
-     * @return bool
-     */
-    public static function redirect($url, $delay = 0, $code = 302)
+  /**
+   * Redirect URL. Первый аргумент URL относительны по приложению, если необходимо
+   * редирект сделать на другой домен или приложение необходимо указывать полную строку
+   * например "http://other=site.com/index/hello"
+   * Второй аргумент если numeric - время задержки, или bool true для force режима
+   * Третий параметр если режим не force код заголовка страницы после переадрисации
+   *
+   *
+   * @param string    $url        Переадресация на URL
+   * @param int|bool  $delayForce Редирек с задержкой с секунднах. Или если true - принудительно.
+   * @param int       $code       HTTP код заголовка; по умолчанию 302
+   * @return bool
+   */
+    public static function redirect($url, $delayForce = 0, $code = 302)
     {
-        if (!headers_sent()) {
-            if ($delay)
-                header('Refresh: ' . $delay . '; url=' . $url, true);
-            else
-                header('Location: ' . $url, true, $code);
-            exit();
-        } else {
-            if (self::$debug)
-                App::ExceptionError('Headers sent. Redirect impossible! ');
+
+        if(!empty($_SERVER['HTTP_X_REQUESTED_WITH']) AND strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest'){
+            header('HTTP/1.1 401 Unauthorized', true, 401);
+            header('WWW-Authenticate: FormBased');
+            die();
         }
-    }
 
+        if( !(strpos($url,'http://') > -1) )
+            $url = App::$url.'/'.$url;
 
-    /**
-     * Пренудительный редирект, обходит отправленые заголовки
-     *
-     * @param string $url Переадресация на URL
-     */
-    public static function redirectForce($url)
-    {
-        if (!headers_sent()) {
-            header('Location: ' . $url);
-        } else {
-            echo "<html><head><title>REDIRECT</title></head><body>";
-            echo '<script type="text/javascript">';
-            echo 'window.location.href="' . $url . '";';
-            echo '</script>';
-            echo '<noscript>';
-            echo '<meta http-equiv="refresh" content="0; url=' . $url . '" />';
-            echo '</noscript>';
+        if($delayForce===true){
+            if (!headers_sent()) {
+              header('Location: ' . $url);
+            } else {
+              echo "<html><head><title>REDIRECT</title></head><body>";
+              echo '<script type="text/javascript">';
+              echo 'window.location.href="' . $url . '";';
+              echo '</script>';
+              echo '<noscript>';
+              echo '<meta http-equiv="refresh" content="0; url=' . $url . '" />';
+              echo '</noscript>';
+              echo "</body></html>";
+            }
+            echo "<!--Headers already!\n-->";
             echo "</body></html>";
+            exit;
         }
-        echo "<!--Headers already!\n-->";
-        echo "</body></html>";
+
+        if (!headers_sent($file, $line)) {
+          if ($delayForce)
+            header('Refresh: ' . $delayForce . '; url=' . $url, true);
+          else
+            header('Location: ' . $url, true, $code);
+          exit();
+        } else {
+          if (App::$debug)
+            App::ExceptionError('Headers sent. Redirect impossible!', '<span style="color:red">File: <b>'.$file.'</b><br>Line: <b>'.$line.'</b><span>');
+          else
+            return true;
+        }
+
         exit;
     }
 
