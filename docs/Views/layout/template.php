@@ -35,9 +35,7 @@
         <p>Copyright &copy; 1560 &mdash; 2013 SunLight, Inc. <a href="http://werd.id1945.com/"> OL Werdffelynir</a>. All
             rights reserved.</p>
 
-        <p>Работает на liteMVC Framework | <?php global $timeLoader;
-            list($microtime, $sec) = explode(chr(32), microtime());
-            echo 'Компиляция: ' . round(($sec + $microtime) - $timeLoader, 4) . ' секунд'; ?>
+        <p>Работает на liteMVC Framework | <?php echo 'Компиляция: ' . timerStop() . ' секунд'; ?>
         </p>
 	</div><!--END footer-->
 
