@@ -10,7 +10,6 @@ error_reporting(E_ALL);
 
 
 
-
 /**  *************************************************************************************
 Запуск системы
  *************************************************************************************  */
@@ -18,18 +17,14 @@ error_reporting(E_ALL);
 // Рабочие константы
 define('DS', DIRECTORY_SEPARATOR);
 
-// Директория корная
-define('ROOT', dirname(__DIR__).DS);
-
 // Директория приложения
 define('APP', __DIR__.DS);
 
 // Директория системы
-define('SYSTEM', ROOT.'Lib'.DS);
+define('SYSTEM', dirname(__DIR__).DS.'Lib'.DS);
 
 // Директория шаблона
 define('LAYOUT', APP.'Views'.DS.'layout'.DS);
-
 
 // Подключение ядра
 include( SYSTEM.'App.php' );
@@ -38,7 +33,6 @@ include( SYSTEM.'App.php' );
 //Конфигурационные настройки приложения
 if(file_exists(APP.'config.php')){
     $config = include( APP.'config.php' );
-    $config['path'] = __DIR__;
 }else
     die('<h1 style="color:#CC0000; text-align:center; margin-top: 100px">App is die! File "config.php" not found!<h1>');
 
