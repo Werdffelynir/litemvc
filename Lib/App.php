@@ -124,8 +124,6 @@ class App
         self::$config['appDir'] = $appPath;
 
         $this->findUrl();
-        self::autoloadHelpers();
-        $this->autoloadClasses();
     }
 
 
@@ -229,6 +227,8 @@ class App
         }
 
 
+        self::autoloadHelpers();
+        $this->autoloadClasses();
         $this->runController();
     }
 
@@ -307,9 +307,9 @@ class App
         if ($className == 'App')
             return false;
 
-        //set_include_path(SYSTEM);
-        spl_autoload_extensions(".php");
-        spl_autoload(SYSTEM.$className);
+        $file = SYSTEM . $className . '.php';
+        if (is_file($file))
+            include_once ($file);
     }
 
 
@@ -336,9 +336,9 @@ class App
      */
     private function classesClasses($className)
     {
-        //set_include_path(APP.'Classes');
-        spl_autoload_extensions(".php");
-        spl_autoload(APP.'Classes/'.$className);
+        $file = APP . 'Classes/' . $className . ".php";
+        if (is_file($file))
+            include_once($file);
     }
 
 
@@ -347,11 +347,9 @@ class App
      */
     private function modelsClasses($className)
     {
-        //set_include_path(APP . 'Models');
-        //echo get_include_path();
-        //echo APP . 'Models/'.$className;
-        spl_autoload_extensions(".php");
-        spl_autoload(APP . 'Models/'.$className);
+        $file = APP . 'Models/' . $className . '.php';
+        if (is_file($file))
+            include_once($file);
     }
 
 
@@ -374,7 +372,6 @@ class App
         if ($cookie OR App::getCookie('lang') == null)
             App::setCookie('lang', $langCode);
 
-        //$file = App::$appPath.'Languages'.DS.'base'.DS.$langCode.'.php';
         $file = APP . 'Languages' . DS . $langCode . '.php';
 
         if (file_exists($file))
@@ -719,34 +716,25 @@ class App
      * @param string $key Имя
      * @param string $value Значение
      * @param null $expire Время хранения
-     * @param null $path Путь
-     * @param null $domain Домен
      * @return bool
      */
-    public static function setCookie($key, $value, $expire = null, $path = null, $domain = null)
+    public static function setCookie($key, $value, $expire = null)
     {
-        if ($expire == null) {
+        if ($expire == null)
             $expire = time() + self::$expireCookTime;
-        }
 
-        if ($domain == null) {
-            $domain = $_SERVER['HTTP_HOST'];
-        }
+        $path = '/' . App::$urlNude . '';
 
-        if ($path == null) {
-            $path = '/' . App::$urlNude . '/';
-        }
         if (self::$decodeCook)
             $value = base64_encode($value);
 
-        return setcookie($key, $value, $expire, $path, $domain);
+        return setcookie($key, $value, $expire, $path);
     }
 
-    public static function updateCookie($key, $value, $expire = null, $path = null, $domain = null)
-    {
-        return self::setCookie($key, $value, $expire, $domain, $path);
-    }
-
+    /**
+     * @param $key
+     * @return null|string
+     */
     public static function getCookie($key)
     {
         if (isset($_COOKIE[$key])) {
@@ -759,18 +747,14 @@ class App
         }
     }
 
-    public static function deleteCookie($key, $domain = null, $path = null)
+    /**
+     * @param $key
+     * @return bool
+     */
+    public static function deleteCookie($key)
     {
-
-        if ($domain === null) {
-            $domain = $_SERVER['HTTP_HOST'];
-        }
-
-        if ($path === null) {
-            $path = '/' . App::$urlNude . '/';
-        }
-
-        return setcookie($key, false, time() - 3600, $path, $domain);
+        $path = '/' . App::$urlNude . '/';
+        return setcookie($key, false, time() - 3600, $path);
     }
 
 
