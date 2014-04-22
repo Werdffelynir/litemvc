@@ -307,9 +307,9 @@ class App
         if ($className == 'App')
             return false;
 
-        set_include_path(SYSTEM);
+        //set_include_path(SYSTEM);
         spl_autoload_extensions(".php");
-        spl_autoload($className);
+        spl_autoload(SYSTEM.$className);
     }
 
 
@@ -336,9 +336,9 @@ class App
      */
     private function classesClasses($className)
     {
-        set_include_path(APP.'Classes');
+        //set_include_path(APP.'Classes');
         spl_autoload_extensions(".php");
-        spl_autoload($className);
+        spl_autoload(APP.'Classes/'.$className);
     }
 
 
@@ -347,9 +347,11 @@ class App
      */
     private function modelsClasses($className)
     {
-        set_include_path(APP . 'Models');
+        //set_include_path(APP . 'Models');
+        //echo get_include_path();
+        //echo APP . 'Models/'.$className;
         spl_autoload_extensions(".php");
-        spl_autoload($className);
+        spl_autoload(APP . 'Models/'.$className);
     }
 
 
