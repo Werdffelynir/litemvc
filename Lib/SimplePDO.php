@@ -163,27 +163,7 @@ class SimplePDO
      * @param string $sql Принимает открытый SQL запрос или безопасный
      * @param array $data Значения для безопасного запроса
      * @return $this        Возвращает екземпляр обекта
-
-    public function query($sql, array $data = null)
-    {
-
-	    
-        if ($this->dbh == null) {
-            //QmError("Connection with DataBase closed!", "Соединение с Базой данны не закрыто или не существует");
-            die("Connection with DataBase closed!");
-        }
-
-        self::$sql = $sql;
-
-        if (is_null($data)) {
-            $this->sth = $this->dbh->prepare($sql);
-            $this->sth->execute();
-        } else {
-            $this->sth = $this->dbh->prepare($sql);
-            $this->sth->execute($data);
-        }
-        return $this;
-    }*/
+     */
     public function query($sql, array $data = null)
     {
         if ($this->dbh == null) {

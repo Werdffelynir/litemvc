@@ -1,5 +1,7 @@
 <?php
 
+include_once('base_functions.php');
+
 
 /**
  * Class App
@@ -284,6 +286,7 @@ class App
         }
     }
 
+    
     /**
      * Авто загрузка классов с директорий системы и приложения.
      */
@@ -294,6 +297,7 @@ class App
         spl_autoload_register(array($this, 'modelsClasses'));
 
     }
+    
 
     /**
      * Регистрация автозагрузки классов системы
@@ -312,22 +316,6 @@ class App
             include_once ($file);
     }
 
-
-    /**
-     * Автозагрузка файлов хелперов
-     */
-    private static function autoloadHelpers()
-    {
-        if (!empty(self::$_helpers)) {
-
-            $autoload = self::$_helpers;
-            $path = APP . 'Helpers' . DS;
-
-            foreach ($autoload as $file)
-                if (file_exists($path . $file . '.php'))
-                    include $path . $file . '.php';
-        }
-    }
 
     /**
      * Регистрация автозагрузки классов приложения
@@ -354,13 +342,30 @@ class App
 
 
     /**
+     * Автозагрузка файлов хелперов
+     */
+    private static function autoloadHelpers()
+    {
+        if (!empty(self::$_helpers)) {
+
+            $autoload = self::$_helpers;
+            $path = APP . 'Helpers' . DS;
+
+            foreach ($autoload as $file)
+                if (file_exists($path . $file . '.php'))
+                    include $path . $file . '.php';
+        }
+    }
+    
+    
+    /**
      * Инициализация языквого файла, установка языковых параметров к cookies, переназначение языка
      * @param bool $langCode
      * @param bool $cookie
      */
     public static function initLang($langCode = false, $cookie = false)
     {
-
+        // Принудительно удалить кеш
         header("Expires: Mon, 26 Jul 1997 05:00:00 GMT");
         header("Cache-Control: no-cache, must-revalidate");
         header("Pragma: no-cache");
