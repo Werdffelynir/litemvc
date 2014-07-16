@@ -12,7 +12,7 @@ $config Массив должен иметь:
     "host"      => "localhost",
     "dbname"    => "myDataBase",
     "user"      => "root",
-    "password"  => "",
+    "password"  => "password",
 ),
 "dbMySql" => array(
     "driver"    => "oci",
